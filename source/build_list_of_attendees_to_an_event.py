@@ -3,18 +3,21 @@ import csv, re
 import tkinter as tk
 
 from grab import Grab
-import grab.transport
-import grab.transport.curl
 from tkinter import ttk
 from tkinter import messagebox
+
+# IDE will report the following import unused, but their presence helps resolve errors when
+# creating the installer with PyInstaller
+import grab.transport
+import grab.transport.curl
 
 
 root = tk.Tk()
 
-username = tk.StringVar()
-password = tk.StringVar()
-event_url = tk.StringVar()
+username = 'fldksoijtgoighlf'
+password = 'HxemorO2FyB2S6DRc8zsTwXIFFCchlI3'
 
+event_url = tk.StringVar()
 login_url = 'https://fetlife.com/login'
 homepage_url = 'https://fetlife.com/home/v4'
 
@@ -70,8 +73,8 @@ def go():
     g.go(login_url)
     if g.doc.url == login_url: # Verify we still need to log in (IE - didn't get redirected past the login page)
         # Enter name and password
-        g.doc.set_input('nickname_or_email', username.get())
-        g.doc.set_input('password', password.get())
+        g.doc.set_input('nickname_or_email', username)
+        g.doc.set_input('password', password)
         g.doc.submit()
 
         # Confirm login was successful
@@ -97,11 +100,12 @@ def go():
                 # If there's no next page link, we're outtie 5,000
                 if not next_page_part:
                     break
+                # Else, get next page url and restart loop
                 page_url = 'https://fetlife.com' + next_page_part[0]
 
 
 ####################
-# Starts here
+# Execution starts here
 ####################
 root.title("Get list of attendees")
 root.resizable(0, 0)
@@ -110,14 +114,6 @@ main_frame = ttk.Frame(root, padding="3 3 12 12")
 main_frame.grid(column=2, row=1, sticky=(tk.W, tk.E))
 main_frame.columnconfigure(0, weight=1)
 main_frame.rowconfigure(0, weight=1)
-
-ttk.Label(main_frame, text="Username").grid(row=1, sticky=tk.W)
-username_entry = ttk.Entry(main_frame, textvariable=username)
-username_entry.grid(row=2, sticky=(tk.W, tk.E))
-
-ttk.Label(main_frame, text="Password").grid(row=3, sticky=tk.W)
-password_entry = ttk.Entry(main_frame, width=36, textvariable=password, show="*")
-password_entry.grid(row=4, sticky=(tk.W, tk.E))
 
 ttk.Label(main_frame, text="Event URL (Ex: https://fetlife.com/events/434286/").grid(row=5, sticky=tk.W)
 event_url_entry = ttk.Entry(main_frame, width=36, textvariable=event_url)
@@ -128,16 +124,9 @@ go_button.grid(row=7, sticky=tk.E)
 
 for child in main_frame.winfo_children(): child.grid_configure(padx=5, pady=5)
 
-username_entry.focus()
+event_url_entry.focus()
 root.bind('<Return>', go_bind)
 
-
-##############################
-# For debugging
-##############################
-# username_entry.insert(0, "")
-# password_entry.insert(0, "")
 event_url_entry.insert(0, "https://fetlife.com/events/")
-
 
 root.mainloop()
